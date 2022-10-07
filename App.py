@@ -1,7 +1,7 @@
 """Module for final execusion"""
 # eat a dick
 # from crypt import methods
-# from Config.BinanceFetchFrontend import PriceDataFetch
+# from Abelian_Frontend_Terminal.Config.BinanceFetchFrontend import PriceDataFetch
 # from flask_restful import Api Resource, reqparse, request
 
 from copy import deepcopy
@@ -9,15 +9,15 @@ from flask import Flask, request
 from flask_restful import Api
 from flask_cors import CORS
 
-from Config.DataSourceFrontend import DataSources
-from Config.AssetPairsFrontend import AssetPairs
-from Config.OHLCDataFrontend import OHLCData
-from Config.ListOfIndicatorsFrontend import IndicatorsToRender
-from Config.ListOfStrategies import Strategies
+from Abelian_Frontend_Terminal.Config.DataSourceFrontend import DataSources
+from Abelian_Frontend_Terminal.Config.AssetPairsFrontend import AssetPairs
+from Abelian_Frontend_Terminal.Config.OHLCDataFrontend import OHLCData
+from Abelian_Frontend_Terminal.Config.ListOfIndicatorsFrontend import IndicatorsToRender
+from Abelian_Frontend_Terminal.Config.ListOfStrategies import Strategies
 # from PriceData.AveragePrices import getAveragePrice
 # from PriceData.BinanceOHLCforIndicators import OHLCformated
-from Indicators.Rendered_Indicators import InitSelectedIndicator
-from Config.AllModelsFrontend import AllModels
+from Abelian_Frontend_Terminal.Indicators.Rendered_Indicators import InitSelectedIndicator
+from Abelian_Frontend_Terminal.Config.AllModelsFrontend import AllModels
 # from Models.Models import Modelz
 # from Models.SelectModels import ModelData
 # from Patterns.ExecutePatterns import AllCandlePatterns
