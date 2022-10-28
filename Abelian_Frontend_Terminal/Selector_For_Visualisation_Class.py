@@ -1,8 +1,10 @@
+import find_parent
 
+from PriceData.Querry_Assets_OHLC_DB_Class import Querry_Assets_OHLC_from_DB
 
 class Select_For_Terminal:
     def __init__(self) -> None:
-        pass
+        self.assets_db = Querry_Assets_OHLC_from_DB()
 
     def return_all_Strategies(self):
         all_Strategies = [
@@ -22,15 +24,18 @@ class Select_For_Terminal:
 
     def return_all_OHLC_Sources(self):
         OHLC_Sources = [
+            {'name': 'Alpaca', 'mic': 'Alpaca'},
             {'name': 'Binance', 'mic': 'Binance'},
-            {'name': 'Bitfinex', 'mic': 'Binance'},
-            {'name': 'FTX', 'mic': 'Binance'},
-            {'name': 'Kraken', 'mic': 'Binance'},
-            {'name': 'Coinbase', 'mic': 'Binance'},
-            {'name': 'Gemini', 'mic': 'Binance'},
-            {'name': 'Bitstamp', 'mic': 'Binance'}
+            {'name': 'Kraken', 'mic': 'Binance'}
         ]
+        # Fetch Assets DB by Distinct data_provider
+        
         return OHLC_Sources
+    
+    def return_assets(self,data_source):
+        asset_dicts = self.assets_db.return_all_assets(data_source)
+        return asset_dicts
+
 
     def return_all_IndicatorCategories(self):  
         IndicatorCategories = [

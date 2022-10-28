@@ -1,163 +1,78 @@
-"""Module for final execusion"""
-# eat a dick
-# from crypt import methods
-# from Abelian_Frontend_Terminal.Config.BinanceFetchFrontend import PriceDataFetch
-# from flask_restful import Api Resource, reqparse, request
-
-from copy import deepcopy
+# Dependencies
 from flask import Flask, request
-from flask_restful import Api
 from flask_cors import CORS
+from flask_restful import Api
 
-from Abelian_Frontend_Terminal.Config.DataSourceFrontend import DataSources
-from Abelian_Frontend_Terminal.Config.AssetPairsFrontend import AssetPairs
-from Abelian_Frontend_Terminal.Config.OHLCDataFrontend import OHLCData
-from Abelian_Frontend_Terminal.Config.ListOfIndicatorsFrontend import IndicatorsToRender
-from Abelian_Frontend_Terminal.Config.ListOfStrategies import Strategies
-# from PriceData.AveragePrices import getAveragePrice
-# from PriceData.BinanceOHLCforIndicators import OHLCformated
-from Abelian_Frontend_Terminal.Indicators.Rendered_Indicators import InitSelectedIndicator
-from Abelian_Frontend_Terminal.Config.AllModelsFrontend import AllModels
-# from Models.Models import Modelz
-# from Models.SelectModels import ModelData
-# from Patterns.ExecutePatterns import AllCandlePatterns
-# from Patterns.SelectPatternTemplateFrontend import FrameTemplate
-# from SimulationApi import RunSimulation
+# General Infrastructure
+from Message_Que.insert_config_rows_DB import Insert_config_rows_into_Q
 
-import find_parent
+# Abelian Repos
+from Abelian_Frontend_Terminal.Selector_For_Visualisation_Class import Select_For_Terminal
+from Abelian_Frontend_Terminal.Data_for_visualisation_Class import Plot_for_Terminal
+
+from Abelian_LiveTrading.Abelian_LiveTrading_Inserts_Class import Abelian_Live_Trading_Insert
+
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
+# Integration of the Frontend Abelian Terminal
 
-@app.route('/DataSources', methods=['GET'])
-def get_data_sources():
+@app.route('/Abelian_Terminal_get_selectors', methods = ['GET'])
+def return_all_selectors():
+    pass
+
+@app.route('/Abelian_Terminal_post_config_for_plotdata', methods = ['POST'])
+def return_plotable_dataset():
+    pass
+
+# Integaration of Abelian Clae
+
+# Integration of Abelian Models
+
+@app.route('/Abelian_Models_post_config', methods = ['POST'])
+def return_plotable_model_dataset():
+    pass
+
+# Integration of Abelian Backtesting
+
+@app.route('/Abelian_Backtesting_post_config', methods = ['POST'])
+def return_simulation_dataset():
+    pass
+
+# Integration of Abelian LiveTrading
+
+@app.route('/Abelian_LiveTrading_post_db_entries', methods = ['POST'])
+def Insert_Setup_Into_DB():
     """Return an ex-parrot."""
-    return{'Metadata':DataSources()}
-
-
-@app.route('/AssetPairs',methods = ['POST'])
-def post_asset_pairs():
-    """Return an ex-parrot."""
+    test = Insert_config_rows_into_Q()
+    db_instance = Abelian_Live_Trading_Insert()
     data = request.get_json()
-    selected_data_source = data['DataSource']
-    return_asset_pairs = AssetPairs(selected_data_source)
-    return {'AssetPairs': return_asset_pairs}
-
-# Create Global Array in which all PriceData gets fetched
-
-GlobalPriceData = []
-
-# def append_global_pricedata(toAppend):
-#     """Return an ex-parrot."""
-#     price_data = deepcopy(getAveragePrice(toAppend))
-#     # print('Average in App.py', PriceData)
-#     GlobalPriceData.append({
-#         'config':toAppend['config'],
-#         'OHLC': toAppend['OHLC'],
-#         'Average': price_data
-#     })
-
-# Price Data ---------------------
-
-# @app.route('/OHLC', methods=['POST'])
-# def ohlc():
-#     """Return an ex-parrot."""
-#     data = request.get_json()
-#     ohlc_config = data['ohlcConfig']
-#     return_ohlc_data = OHLCData(ohlc_config)
-#     append_global_pricedata({'config':ohlc_config,'OHLC': return_ohlc_data})
-#     return {'config':ohlc_config,'OHLC': return_ohlc_data}
-
-
-# Indicators Data ---------------------
-
-@app.route('/ListAllIndicators', methods=['GET'])
-def list_indi():
-    """Return an ex-parrot."""
-    return {'IndicatorsToRender': IndicatorsToRender}
-
-@app.route('/RenderIndicator', methods=['POST'])
-def render_indi():
-    """Return an ex-parrot."""
-    data = request.get_json()
-    indicator_config = data['config']
-    if len(GlobalPriceData)>0:
-        # Ze Übeltäter
-        # ohlc_price = deepcopy(OHLCformated(GlobalPriceData[-1]['OHLC']))
-        ohlc_price = deepcopy(GlobalPriceData[-1]['OHLC'])
-        indicator_ready = InitSelectedIndicator(
-            indicator_config['selectedIndicator']['symbol'],
-            ohlc_price,
-            int(indicator_config['selectedPeriod'])
-        )
-        return {
-            'Indicator': indicator_ready,
-            'config': indicator_config
-        }
-
-# Pattern Screener Data ------------------------
-
-# @app.route('/PatternScreening', methods=['GET'])
-# def pattern_screening():StatisticsPriceData
-#     """Return an ex-parrot."""
-#     if len(GlobalPriceData)>0:
-#         data = request.get_json()
-#         screening_config = data['config']
-#         # Select Frame Template (Binance, Alpaca,... whatevaaa)
-#         frame_template = FrameTemplate(screening_config)
-#         ohlc_price = deepcopy(OHLCformated(GlobalPriceData[-1]['OHLC']))
-#         patterns = AllCandlePatterns(ohlc_price, frame_template)
-#         return {'AllPatterns': patterns}
-
-# Statistics Data ---------------------
-
-@app.route('/AllModels', methods=['GET'])
-def get_all_models():
-    """Return an ex-parrot."""
-    return{'Metadata':AllModels()}
-
-# @app.route('/Statistics', methods=['POST'])
-# def statistics():
-#     """Return an ex-parrot."""
-#     data = request.get_json()
-#     ohlc_config = data['OHLCConfig']
-#     model_config = data['ModelConfig']
-#     StatisticsPriceData = []
-#     for config_set in ohlc_config:
-#         return_ohlc_data = OHLCData(config_set)
-#         price_data = deepcopy(getAveragePrice({'config':config_set,'OHLC': return_ohlc_data}))
-#         StatisticsPriceData.append({
-#             'config':config_set,
-#             'OHLC': return_ohlc_data,
-#             'Average': price_data
-#         })
+    data_source = data['']
+    
+    if data_source == 'Insert_User':
+        db_instance.insert_user(data_source)
         
-#     frame = Modelz(StatisticsPriceData)
-#     rendered_model = ModelData(model_config,frame)
-#     return {'Config': model_config, 'StatisticsModel': rendered_model}
+    elif data_source == 'Insert_API_Keys':
+        db_instance.insert_api_keys(data_source)
 
-# Simulation Data ---------------------
+    elif data_source == 'Insert_Config_Setup':
+        db_instance.insert_config_live_trading(data_source)
+        
+        test.fetch_config_rows()
+        test.insert_deploy_messages_into_q()
 
-@app.route('/ListAllStrategies', methods=['GET'])
-def list_strat():
-    """Return an ex-parrot."""
-    return {'Strategies': Strategies}
+    elif data_source == 'Delete_User':
+        db_instance.insert_config_live_trading(data_source)
 
-# # from PriceData.BinanceAveragePrice import AveragePrice
-# @app.route('/Simulation', methods=['POST'])
-# def sim():
-#     """Return an ex-parrot."""
-#     if len(GlobalPriceData)>0:
-#         data = request.get_json()
-#         simulation_config = data['config']
-#         ohlc_price = deepcopy(OHLCformated(GlobalPriceData[-1]['OHLC']))
-#         simulation = RunSimulation(ohlc_price,simulation_config)
-#         return {
-#             'Simulation': simulation,
-#             'config': simulation_config
-#         }
+    elif data_source == 'Delete_API_Keys':
+        db_instance.insert_config_live_trading(data_source)
 
-host='0.0.0.0'
-app.run(host='localhost',port=5001,debug=True)
+    elif data_source == 'Deactivate_Config_Setup':
+
+        test.fetch_config_rows()
+        test.insert_stop_trading_messages_into_q()
+        pass
+    
+    return {'Setup_Inserted'}
