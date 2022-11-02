@@ -9,9 +9,13 @@ class Plot_for_Terminal:
     def return_OHLC_data(self, ticker):
         # Fetch Assets DB by ticker and data_provider
         self.ohlc_set = self.ohlc_db.return_historical_ohlc_from_db(ticker)
+        
         # create indicators_instance
+        self.indicator_instance = Indicators(self.ohlc_set)
+
         return self.ohlc_set
 
-    def create_Indicators_instance(self):
-        self.indicator_instance = Indicators(self.ohlc_set)
+    def return_Indicators_data(self, indicator_name):
+        # Get args by indicator_name
+        # self.indicator_instance.
         pass

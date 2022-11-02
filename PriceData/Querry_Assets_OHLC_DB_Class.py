@@ -1,4 +1,4 @@
-import find_parent
+# import find_parent
 from Database_SQL.aws_sql_connect import SQL_Server
 
 
@@ -7,6 +7,14 @@ class Querry_Assets_OHLC_from_DB:
         self.db_name = 'DummyData'
         self.db_connection = SQL_Server(self.db_name)
 
+    def return_all_dataproviders(self):
+        querry_all_dataproviders_Distinct_sql = f"""
+            SELECT DISTINCT dataprovider FROM {self.db_name}.assets
+        """
+        self.db_connection.cursor.execute(querry_all_dataproviders_Distinct_sql)
+        table = self.db_connection.cursor.fetchall()
+        return table
+    
     def return_all_assets(self, data_provider=None):
         query_all_assets_sql = f"""
             SELECT * FROM {self.db_name}.assets
@@ -20,6 +28,23 @@ class Querry_Assets_OHLC_from_DB:
             table = self.db_connection.cursor.fetchall()
         else:
             self.db_connection.cursor.execute(query_all_assets_by_data_provider_sql)
+            table = self.db_connection.cursor.fetchall()
+
+        return table
+
+    def return_all_candle_sizes(self, data_provider=None):
+        querry_all_candle_sizes_Distinct_sql = f"""
+            SELECT DISTINCT data_provider FROM {self.db_name}.assets
+        """
+        querry_all_candle_sizes_by_data_provider_Distinct_sql = f"""
+            SELECT DISTINCT data_provider FROM {self.db_name}.assets
+            WHERE data_provider = '{data_provider}
+        """
+        if data_provider == None:
+            self.db_connection.cursor.execute(querry_all_candle_sizes_Distinct_sql)
+            table = self.db_connection.cursor.fetchall()
+        else:
+            self.db_connection.cursor.execute(querry_all_candle_sizes_by_data_provider_Distinct_sql)
             table = self.db_connection.cursor.fetchall()
 
         return table

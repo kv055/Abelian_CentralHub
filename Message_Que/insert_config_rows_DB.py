@@ -1,6 +1,6 @@
-import find_parent
+# import Message_Que.find_parent
 import json
-from Q_PUB_SUB_class import Q
+from Message_Que.Q_PUB_SUB_class import Q
 from Database_SQL.aws_sql_connect import SQL_Server
 
 # for index,row in enumerate(all_rows):

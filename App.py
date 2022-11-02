@@ -1,5 +1,5 @@
 # Dependencies
-from flask import Flask, request
+from flask import Flask, request, session
 from flask_cors import CORS
 from flask_restful import Api
 
@@ -17,17 +17,54 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-# Integration of the Frontend Abelian Terminal
+app.secret_key = 'DeezNutz'
 
+# Integration of the Frontend Abelian Terminal
+selector_instance = Select_For_Terminal()
+selected_asset = None
 @app.route('/Abelian_Terminal_get_selectors', methods = ['GET'])
 def return_all_selectors():
-    pass
+    all_possible_selections = {
+        # Fetching Price-data
+        'all_OHLC_sources': selector_instance.return_all_OHLC_Sources(),
+        # Fetching all Technical Indicators
+        'all_technical_Indicators': selector_instance.return_all_technical_Indicators(),
+        # Fetching all available Models
+        'all_Models': selector_instance.return_all_Models(),
+        # Fetching all available Strategies for Backtesting
+        'all_Strategies': selector_instance.return_all_Strategies(),
+    }
+    return all_possible_selections
 
-@app.route('/Abelian_Terminal_post_config_for_plotdata', methods = ['POST'])
+@app.route('/Abelian_Terminal_post_asset_selectors', methods = ['POST'])
+def return_all_chosen_selectors():
+    # Get selected Asset
+    data = request.get_json()
+    selected_data_source = data['DataSource']['name']
+    all_assets_by_datasource = selector_instance.return_assets(selected_data_source)
+    return all_assets_by_datasource
+
+
+@app.route('/Abelian_Terminal_post_ohlc_config_for_plotdata', methods = ['POST'])
 def return_plotable_dataset():
-    pass
+    asset_dict = request.get_json()
+    # Init Session
+    plot_data_instance = Plot_for_Terminal(asset_dict)
+    # session['plot_data_instance'] = plot_data_instance
+    ohlc_data_set = plot_data_instance.return_OHLC_data(asset_dict)
+    return ohlc_data_set
 
-# Integaration of Abelian Clae
+@app.route('/Abelian_Terminal_post_Indicator_config_for_plotdata', methods = ['POST'])
+def return_plotable_indicators_set():
+    data = request.get_json()
+    Indicator_by_name = data['Indicator_by_name']
+    # Get Session
+    plot_data_instance = session['plot_data_instance']
+    indicator_data_set = plot_data_instance.return_Indicators_data(Indicator_by_name)
+    return indicator_data_set
+
+
+# Integaratidefon of Abelian Clae
 
 # Integration of Abelian Models
 
