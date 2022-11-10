@@ -24,23 +24,16 @@ class Select_For_Terminal:
         return all_Models
 
     def return_all_OHLC_Sources(self):
-        OHLC_Sources = [
-            {'name': 'Alpaca', 'mic': 'Alpaca'},
-            {'name': 'Binance', 'mic': 'Binance'},
-            {'name': 'Kraken', 'mic': 'Binance'}
-        ]
-        return OHLC_Sources
-        
-        # # Fetch Assets DB by Distinct data_provider
-        # data_providers = self.assets_db.return_all_dataproviders()
-        # return data_providers
+        data_providers =self.assets_db.return_all_dataproviders()
+        return data_providers
 
-    def return_assets(self,data_source):
+
+    def return_assets_and_candleSizes(self,data_source):
         asset_dicts = self.assets_db.return_all_assets(data_source)
-        all_candle_sizes_by_data_source = self.assets_db.return_all_candle_sizes()
+        all_candle_sizes_by_data_source = self.assets_db.return_all_candle_sizes(data_source)
         return {
             'assetPairs': asset_dicts,
-            'candleSize': all_candle_sizes_by_data_source
+            'candleSizes': all_candle_sizes_by_data_source
         }
         
     

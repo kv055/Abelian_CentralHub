@@ -1,4 +1,5 @@
 # Dependencies
+import json
 from flask import Flask, request, session
 from flask_cors import CORS
 from flask_restful import Api
@@ -41,8 +42,8 @@ def return_all_selectors():
 def return_all_chosen_selectors():
     # Get selected Asset
     data = request.get_json()
-    selected_data_source = data['DataSource']['name']
-    all_assets_by_datasource = selector_instance.return_assets(selected_data_source)
+    selected_data_source = data['DataSource']['data_provider']
+    all_assets_by_datasource = selector_instance.return_assets_and_candleSizes(selected_data_source)
     return all_assets_by_datasource
 
 
@@ -53,16 +54,17 @@ def return_plotable_dataset():
     plot_data_instance = Plot_for_Terminal(asset_dict)
     # session['plot_data_instance'] = plot_data_instance
     ohlc_data_set = plot_data_instance.return_OHLC_data(asset_dict)
-    return ohlc_data_set
+    ohlc_data_set_in_json = json.dumps(ohlc_data_set)
+    return ohlc_data_set_in_json
 
 @app.route('/Abelian_Terminal_post_Indicator_config_for_plotdata', methods = ['POST'])
 def return_plotable_indicators_set():
     data = request.get_json()
-    Indicator_by_name = data['Indicator_by_name']
+    Selected_Indicator = data
     # Get Session
     plot_data_instance = session['plot_data_instance']
-    indicator_data_set = plot_data_instance.return_Indicators_data(Indicator_by_name)
-    return indicator_data_set
+    # indicator_data_set = plot_data_instance.return_Indicators_data(Indicator_by_name)
+    return 'indicator_data_set'
 
 
 # Integaratidefon of Abelian Clae
