@@ -5,15 +5,14 @@ from flask_cors import CORS
 from flask_restful import Api
 
 # General Infrastructure
-from Message_Que.insert_config_rows_DB import Insert_config_rows_into_Q
+from Abelian_Live_Trading.Q_for_Abelian_Live_Trading import Insert_config_rows_into_Q
 
 # Abelian Repos
 from Abelian_Frontend_Terminal.Selector_For_Visualisation_Class import Select_For_Terminal
 from Abelian_Frontend_Terminal.Data_for_visualisation_Class import Plot_for_Terminal
 
-from Abelian_LiveTrading.Abelian_LiveTrading_Inserts_Class import Abelian_Live_Trading_Insert
-
-from Abelian_Backtesting.Insert_config_into_Q import Back_testing
+from Abelian_Live_Trading.Abelian_Live_Trading_Inserts_Class import Abelian_Live_Trading_Insert
+from Abelian_Backtesting.Q_for_Abelian_BackTesting import Insert_BackTesting_config_into_Q
 
 app = Flask(__name__)
 CORS(app)
@@ -76,7 +75,8 @@ def return_plotable_model_dataset():
     pass
 
 # Integration of Abelian Backtesting
-Back_testing_instance = Back_testing()
+
+Back_testing_instance = Insert_BackTesting_config_into_Q()
 @app.route('/Abelian_Backtesting_post_config', methods = ['POST'])
 def create_simulation_dataset():
     sim_config = request.get_json()
