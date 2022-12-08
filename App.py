@@ -21,10 +21,10 @@ api = Api(app)
 app.secret_key = 'DeezNutz'
 
 # Integration of the Frontend Abelian Terminal
-selector_instance = Select_For_Terminal()
-selected_asset = None
+
 @app.route('/Abelian_Terminal_get_selectors', methods = ['GET'])
 def return_all_selectors():
+    selector_instance = Select_For_Terminal()
     all_possible_selections = {
         # Fetching Price-data
         'all_OHLC_sources': selector_instance.return_all_OHLC_Sources(),
@@ -42,6 +42,7 @@ def return_all_chosen_selectors():
     # Get selected Asset
     data = request.get_json()
     selected_data_source = data['DataSource']['data_provider']
+    selector_instance = Select_For_Terminal()
     all_assets_by_datasource = selector_instance.return_assets_and_candleSizes(selected_data_source)
     return all_assets_by_datasource
 
@@ -59,10 +60,12 @@ def return_plotable_dataset():
 @app.route('/Abelian_Terminal_post_Indicator_config_for_plotdata', methods = ['POST'])
 def return_plotable_indicators_set():
     data = request.get_json()
-    Selected_Indicator = data
-    # Get Session
-    plot_data_instance = session['plot_data_instance']
-    # indicator_data_set = plot_data_instance.return_Indicators_data(Indicator_by_name)
+    Asset_dict = data['Asset_dict']
+    Selected_Indicator = data['Selected_Indicator']
+    
+    plot_data_instance = Plot_for_Terminal(Asset_dict)
+    ohlc_data_set = plot_data_instance.return_OHLC_data(Asset_dict)
+    indicator_data_set = plot_data_instance.return_Indicators_data(Selected_Indicator)
     return 'indicator_data_set'
 
 
@@ -75,11 +78,10 @@ def return_plotable_model_dataset():
     pass
 
 # Integration of Abelian Backtesting
-
-Back_testing_instance = Insert_BackTesting_config_into_Q()
 @app.route('/Abelian_Backtesting_post_config', methods = ['POST'])
 def create_simulation_dataset():
     sim_config = request.get_json()
+    Back_testing_instance = Insert_BackTesting_config_into_Q()
     Back_testing_instance.insert_start_simulation_config_into_Q(sim_config)
 
 @app.route('/Abelian_Backtesting_get_list_all_sim_sets', methods = ['GET'])
