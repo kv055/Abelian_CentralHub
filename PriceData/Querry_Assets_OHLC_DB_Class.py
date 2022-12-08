@@ -1,5 +1,5 @@
 # import find_parent
-from Database_SQL.aws_sql_connect import SQL_Server
+from External_Infrastructure .aws_sql_connect import SQL_Server
 
 
 class Querry_Assets_OHLC_from_DB:
