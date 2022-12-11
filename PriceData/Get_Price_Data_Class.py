@@ -7,9 +7,9 @@ This allows for any data source to be used at runtime.
 import numpy
 # import talib
 import pandas as pd
+import PriceData.find_parent
 
-
-from Querry_Assets_OHLC_DB_Class import Querry_Assets_OHLC_from_DB
+from PriceData.Querry_Assets_OHLC_DB_Class import Querry_Assets_OHLC_from_DB
 
 class ImportData:
     """Class"""
@@ -44,21 +44,23 @@ class ImportData:
 
     def Create_seperate_ohlc_traces(self, asset_dict):
         self.separated_ohlc_traces_dict = {
-            'Date': [],
+            'Timestamp': [],
             'Open': [],
             'High': [],
             'Low': [],
             'Close': []
         }
 
-        self.Querry_ohlc_list_from_DB(asset_dict)
-        
-        for row in self.ohlc_list:
-            self._dict['Date'].append(row)
-            self.separated_ohlc_traces_dict['Open'].append(row)
-            self.separated_ohlc_traces_dict['high'].append(row)
-            self.separated_ohlc_traces_dict['low'].append(row)
-            self.separated_ohlc_traces_dict['close'].append(row)
+        # self.Querry_ohlc_list_from_DB(asset_dict)
+        self.Querry_ohlc_dict_from_DB(asset_dict)
+
+        # for row in self.ohlc_list:
+        for row in self.ohlc_dict:    
+            self.separated_ohlc_traces_dict['Timestamp'].append(row['Timestamp'])
+            self.separated_ohlc_traces_dict['Open'].append(row['Open'])
+            self.separated_ohlc_traces_dict['High'].append(row['High'])
+            self.separated_ohlc_traces_dict['Low'].append(row['Low'])
+            self.separated_ohlc_traces_dict['Close'].append(row['Close'])
 
     def Create_seperate_average_price_traces(self, asset_dict):
         self.separated_average_price_traces_dict = {
