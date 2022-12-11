@@ -1,12 +1,14 @@
 import math
 import talib
 from copy import deepcopy
+import Indicators.find_parent
 
+from PriceData.Get_Price_Data_Class import ImportData
 
 class Indicators:
-    def __init__(self, Pricedata_Instance):
-        self.ohlc_pricedata = Pricedata_Instance
-    
+    def __init__(self, asset_dict):
+        price_data_instance = ImportData()
+        self.ohlc_as_numpy_array = price_data_instance.return_ohlc_numpy_array(asset_dict)
     
     def delNan(self,list):
         #function that deletes NaN values from a list that is filled with indicator data
@@ -82,9 +84,14 @@ class Indicators:
 
     # Exponential Moving Average
     def EMA(self,Range):
-        
-        _EMA = talib.EMA(self.ohlc_pricedata['close'],Range).tolist()
-        return[_EMA,self.ohlc_pricedata['date'],self.ohlc_pricedata['close'].tolist(),Range]
+        Indicator_Object = talib.EMA(self.ohlc_as_numpy_array['np_Close'],Range)
+        Indicator_as_list = list(Indicator_Object)
+        Indicator_without_NAN = self.delNan(Indicator_as_list)
+        return {
+            "Indicator_Values": Indicator_without_NAN,
+            "Time_Values": [],
+            "Indicator_Config": 'Penis'
+        }
     # 
     # # Hilbert Transform - Instantaneous Trendline
     # def HT_TRENDLINE(self,PriceData):
