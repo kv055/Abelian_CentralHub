@@ -6,7 +6,8 @@ from flask_restful import Api
 
 # General Infrastructure
 from Abelian_Live_Trading.Q_for_Abelian_Live_Trading import Insert_config_rows_into_Q
-
+from Indicators.Indicators_Class import Indicators
+from PriceData.Get_Price_Data_Class import ImportData
 # Abelian Repos
 from Abelian_Frontend_Terminal.Selector_For_Visualisation_Class import Select_For_Terminal
 from Abelian_Frontend_Terminal.Data_for_visualisation_Class import Plot_for_Terminal
@@ -46,27 +47,28 @@ def return_all_chosen_selectors():
     all_assets_by_datasource = selector_instance.return_assets_and_candleSizes(selected_data_source)
     return all_assets_by_datasource
 
-
 @app.route('/Abelian_Terminal_post_ohlc_config_for_plotdata', methods = ['POST'])
 def return_plotable_dataset():
+    # save posted data
     asset_dict = request.get_json()
-    # Init Session
-    plot_data_instance = Plot_for_Terminal(asset_dict)
-    # session['plot_data_instance'] = plot_data_instance
-    ohlc_data_set = plot_data_instance.return_OHLC_data(asset_dict)
-    ohlc_data_set_in_json = json.dumps(ohlc_data_set)
-    return ohlc_data_set_in_json
+
+    OHLC_Instance = ImportData()
+    OHLC_data_set_with_seperated_traces = OHLC_Instance.return_seperate_ohlc_traces(asset_dict)
+    OHLC_data_set_in_json = json.dumps(OHLC_data_set_with_seperated_traces)
+    return OHLC_data_set_in_json
 
 @app.route('/Abelian_Terminal_post_Indicator_config_for_plotdata', methods = ['POST'])
 def return_plotable_indicators_set():
+    # save posted data
     data = request.get_json()
     Asset_dict = data['Asset_dict']
     Selected_Indicator = data['Selected_Indicator']
-    
-    plot_data_instance = Plot_for_Terminal(Asset_dict)
-    ohlc_data_set = plot_data_instance.return_OHLC_data(Asset_dict)
-    indicator_data_set = plot_data_instance.return_Indicators_data(Selected_Indicator)
-    return 'indicator_data_set'
+
+    Indicator_Instance = Indicators(Asset_dict)
+    Indicator_Method = getattr(Indicator_Instance, Selected_Indicator['Name'])
+    Indicator_Data =  Indicator_Method(Selected_Indicator['Range'])
+    Indicator_data_in_json = json.dumps(Indicator_Data)
+    return Indicator_data_in_json
 
 
 # Integaratidefon of Abelian Clae
@@ -78,11 +80,11 @@ def return_plotable_model_dataset():
     pass
 
 # Integration of Abelian Backtesting
-@app.route('/Abelian_Backtesting_post_config', methods = ['POST'])
+@app.route('/Abelian_Backtesting_post_big_sim_config', methods = ['POST'])
 def create_simulation_dataset():
     sim_config = request.get_json()
     Back_testing_instance = Insert_BackTesting_config_into_Q()
-    Back_testing_instance.insert_start_simulation_config_into_Q(sim_config)
+    Back_testing_instance.Backtesting_Insert_config_into_q(sim_config)
 
 @app.route('/Abelian_Backtesting_get_list_all_sim_sets', methods = ['GET'])
 def return_all_sim_sets_to_select():
