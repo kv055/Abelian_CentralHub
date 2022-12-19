@@ -1,6 +1,6 @@
 # Dependencies
 import json
-from flask import Flask, request, session
+from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import Api
 
@@ -18,8 +18,6 @@ from Abelian_Backtesting.Q_for_Abelian_BackTesting import Insert_BackTesting_con
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
-
-app.secret_key = 'DeezNutz'
 
 # Integration of the Frontend Abelian Terminal
 
@@ -47,8 +45,8 @@ def return_all_chosen_selectors():
     all_assets_by_datasource = selector_instance.return_assets_and_candleSizes(selected_data_source)
     return all_assets_by_datasource
 
-@app.route('/Abelian_Terminal_post_ohlc_config_for_plotdata', methods = ['POST'])
-def return_plotable_dataset():
+@app.route('/Abelian_Terminal_post_ohlc_config_for_ohlc_plotdata', methods = ['POST'])
+def return_plotable_ohlc_dataset():
     # save posted data
     asset_dict = request.get_json()
 
@@ -80,6 +78,7 @@ def return_plotable_model_dataset():
     pass
 
 # Integration of Abelian Backtesting
+
 @app.route('/Abelian_Backtesting_post_big_sim_config', methods = ['POST'])
 def create_simulation_dataset():
     sim_config = request.get_json()
